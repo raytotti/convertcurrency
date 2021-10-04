@@ -20,3 +20,7 @@ spring:
       hibernate:
         show_sql: true
         format_sql: false
+conversion:
+  access-key: 51feb7685b0f35b307191ac711b3784a
+  url: http://api.exchangeratesapi.io/
+  uri: latest?base=EUR&access_key={key}&symbols={to},{from}

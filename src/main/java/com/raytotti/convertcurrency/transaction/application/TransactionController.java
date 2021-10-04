@@ -1,12 +1,20 @@
 package com.raytotti.convertcurrency.transaction.application;
 
+import com.raytotti.convertcurrency.commun.application.ResponseCollection;
 import com.raytotti.convertcurrency.conversion.domain.Conversion;
-import com.raytotti.convertcurrency.conversion.domain.IConversionRepository;
+import com.raytotti.convertcurrency.conversion.domain.IConversionService;
 import com.raytotti.convertcurrency.transaction.domain.Transaction;
 import com.raytotti.convertcurrency.transaction.domain.TransactionRepository;
+import com.raytotti.convertcurrency.transaction.exception.TransactionNotFound;
+import com.raytotti.convertcurrency.user.domain.UserRepository;
+import com.raytotti.convertcurrency.user.exception.UserNotFoundException;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,30 +26,27 @@ import java.util.UUID;
 
 import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
 
-@RestController
-@RequestMapping(path = "/api/v1/transactions")
-@AllArgsConstructor
 @Slf4j
+@RestController
+@AllArgsConstructor
+@RequestMapping(path = "/api/v1/transactions")
 @Api(tags = "Transaction Currency Operations")
 public class TransactionController {
 
     private final TransactionRepository repository;
-    private final IConversionRepository conversionRepository;
+    private final IConversionService conversionService;
+    private final UserRepository userRepository;
 
     @PostMapping
     public ResponseEntity<TransactionResponse> create(@RequestBody @Valid CreateTransactionRequest request) {
 
-        BigDecimal conversionRate = conversionRepository.getRate(new Conversion(request.getOriginCurrency(), request.getDestinationCurrency()));
+        if (!userRepository.existsById(request.getUserId())) {
+            throw new UserNotFoundException();
+        }
 
-        Transaction newTransaction = Transaction.builder()
-                .userId(request.getUserId())
-                .originCurrency(request.getOriginCurrency())
-                .originValue(request.getOriginValue())
-                .destinationCurrency(request.getDestinationCurrency())
-                .conversionRate(conversionRate)
-                .build();
+        BigDecimal conversionRate = conversionService.getRate(Conversion.of(request.getOriginCurrency(), request.getDestinationCurrency()));
 
-        repository.save(newTransaction);
+        Transaction newTransaction = repository.save(Transaction.of(request, conversionRate));
 
         TransactionResponse response = TransactionResponse.from(newTransaction);
 
@@ -54,9 +59,26 @@ public class TransactionController {
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<TransactionResponse> findById(@PathVariable String id) {
+
         Optional<Transaction> transaction = repository.findById(UUID.fromString(id));
-        TransactionResponse transactionResponse = TransactionResponse.from(transaction.orElseThrow());
+
+        TransactionResponse transactionResponse = TransactionResponse.from(transaction.orElseThrow(TransactionNotFound::new));
+
         return ResponseEntity.ok(transactionResponse);
+    }
+
+    @GetMapping(path = "/users/{userId}")
+    public ResponseEntity<ResponseCollection<TransactionResponse>> findByUserId(@PathVariable UUID userId,
+                                                                                @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotFoundException();
+        }
+
+        Page<TransactionResponse> transactions = repository.findByUserId(userId, pageable)
+                .map(TransactionResponse::from);
+
+        return ResponseEntity.ok(ResponseCollection.from(transactions));
     }
 
 }

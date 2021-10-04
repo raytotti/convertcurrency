@@ -3,10 +3,9 @@ package com.raytotti.convertcurrency.user.application;
 import com.raytotti.convertcurrency.commun.application.ResponseCollection;
 import com.raytotti.convertcurrency.user.domain.User;
 import com.raytotti.convertcurrency.user.domain.UserRepository;
+import com.raytotti.convertcurrency.user.exception.UserExistsException;
+import com.raytotti.convertcurrency.user.exception.UserNotFoundException;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,37 +22,42 @@ import java.util.UUID;
 
 import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
 
-@RestController
-@RequestMapping(path = "/api/v1/users")
-@AllArgsConstructor
 @Slf4j
+@RestController
+@AllArgsConstructor
 @Api(tags = "User Operations")
+@RequestMapping(path = "/api/v1/users")
 public class UserController {
 
     private final UserRepository repository;
 
     @GetMapping
     @ResponseBody
-    @ApiOperation("Retrieve all users")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful Operation")
-    })
-    public ResponseEntity<ResponseCollection<UserResponse>> findAll(@PageableDefault(sort = "name", direction = Sort.Direction.DESC, page = 0, size = 10) Pageable pageable) {
+    public ResponseEntity<ResponseCollection<UserResponse>> findAll(@PageableDefault(sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
+
         Page<UserResponse> users = repository.findAll(pageable)
                 .map(UserResponse::from);
+
         return ResponseEntity.ok(ResponseCollection.from(users));
 
     }
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<UserResponse> findById(@PathVariable String id) {
+
         Optional<User> user = repository.findById(UUID.fromString(id));
-        UserResponse userResponse = UserResponse.from(user.orElseThrow());
+
+        UserResponse userResponse = UserResponse.from(user.orElseThrow(UserNotFoundException::new));
+
         return ResponseEntity.ok(userResponse);
     }
 
     @PostMapping
     public ResponseEntity<UserResponse> create(@RequestBody @Valid CreateUserRequest request) {
+
+        if (repository.existsByCpf(request.getCpf())) {
+            throw new UserExistsException();
+        }
 
         User newUser = User.builder()
                 .cpf(request.getCpf())

@@ -1,16 +1,18 @@
 package com.raytotti.convertcurrency.conversion.domain;
 
 import com.raytotti.convertcurrency.transaction.domain.Currency;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-public class Conversion {
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public final class Conversion {
 
     private final Currency to;
     private final Currency from;
 
-    public Conversion(Currency to, Currency from) {
-        this.to = to;
-        this.from = from;
+    public static Conversion of(Currency to, Currency from) {
+        return new Conversion(to, from);
     }
 }

@@ -17,13 +17,19 @@ import java.util.UUID;
 public final class CreateTransactionRequest {
 
     @Valid
-    @NotNull(message = "{User.name.NotNull}")
+    @NotNull(message = "{Transaction.userId.NotNull}")
     private UUID userId;
 
+    @Valid
+    @NotNull(message = "{Transaction.originCurrency.NotNull}")
     private Currency originCurrency;
 
+    @Valid
+    @NotNull(message = "{Transaction.originValue.NotNull}")
     private BigDecimal originValue;
 
+    @Valid
+    @NotNull(message = "{Transaction.destinationCurrency.NotNull}")
     private Currency destinationCurrency;
 
 }
