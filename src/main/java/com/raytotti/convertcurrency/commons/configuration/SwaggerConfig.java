@@ -15,11 +15,16 @@ public class SwaggerConfig {
     @Bean
     public Docket swaggerDocket() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .enable(true)
                 .select()
                 .paths(PathSelectors.any())
                 .apis(RequestHandlerSelectors.basePackage("com.raytotti.convertcurrency"))
                 .build()
-                .useDefaultResponseMessages(false);
+                .apiInfo(new ApiInfoBuilder()
+                        .title("Convert Currency")
+                        .description("API Rest that is able to perform a conversion between two currencies using updated rates from an external service.")
+                        .version("1.0.0")
+                        .contact(new Contact("Ray Toti Felix de Araujo", "https://github.com/raytotti/convertcurrency", "raytottifa@hotmail.com"))
+                        .build());
+
     }
 }
