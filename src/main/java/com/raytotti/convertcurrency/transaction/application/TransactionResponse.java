@@ -2,16 +2,14 @@ package com.raytotti.convertcurrency.transaction.application;
 
 import com.raytotti.convertcurrency.transaction.domain.Currency;
 import com.raytotti.convertcurrency.transaction.domain.Transaction;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Getter
+@ToString
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class TransactionResponse {

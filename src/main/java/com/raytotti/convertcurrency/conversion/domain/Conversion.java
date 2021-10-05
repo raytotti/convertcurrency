@@ -4,8 +4,10 @@ import com.raytotti.convertcurrency.transaction.domain.Currency;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Conversion {
 
