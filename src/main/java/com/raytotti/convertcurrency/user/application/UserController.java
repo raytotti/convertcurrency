@@ -6,6 +6,9 @@ import com.raytotti.convertcurrency.user.domain.UserRepository;
 import com.raytotti.convertcurrency.user.exception.UserExistsException;
 import com.raytotti.convertcurrency.user.exception.UserNotFoundException;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -34,6 +37,14 @@ public class UserController {
 
     @PostMapping
     @Transactional
+    @ApiOperation(value = "Create new User.", response = UserResponse.class, responseContainer = "User")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Operation completed successfully."),
+            @ApiResponse(code = 400, message = "Failed to validate! Request Invalid."),
+            @ApiResponse(code = 409, message = "Failed to validate! User already exists."),
+            @ApiResponse(code = 415, message = "Unsupported Content Type."),
+            @ApiResponse(code = 500, message = "Unexpected system failure.")
+    })
     public ResponseEntity<UserResponse> create(@RequestBody @Valid CreateUserRequest request) {
         log.info("UserController -> create: Solicitado a criação de um usuário: {}", request);
 
@@ -60,6 +71,13 @@ public class UserController {
     }
 
     @GetMapping(path = "/{id}")
+    @ApiOperation(value = "Retrieve an User by Id.", response = UserResponse.class, responseContainer = "User")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Operation completed successfully."),
+            @ApiResponse(code = 400, message = "Failed to validate! Request Invalid."),
+            @ApiResponse(code = 404, message = "Failed to validate! User not found."),
+            @ApiResponse(code = 500, message = "Unexpected system failure.")
+    })
     public ResponseEntity<UserResponse> findById(@PathVariable UUID id) {
         log.info("UserController -> findById: Solicitado a busca de um usuário pelo id {}.", id);
         Optional<User> user = repository.findById(id);
@@ -75,6 +93,12 @@ public class UserController {
 
     @GetMapping
     @ResponseBody
+    @ApiOperation(value = "Retrieve all Users.", response = UserResponse.class, responseContainer = "User")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Operation completed successfully."),
+            @ApiResponse(code = 400, message = "Failed to validate! Request Invalid."),
+            @ApiResponse(code = 500, message = "Unexpected system failure.")
+    })
     public ResponseEntity<ResponseCollection<UserResponse>> findAll(@PageableDefault(sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
         log.info("UserController -> findAll: Solicitado a busca de todos usuário com a paginação {}.", pageable);
 
