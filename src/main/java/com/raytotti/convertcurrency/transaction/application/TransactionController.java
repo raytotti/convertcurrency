@@ -1,6 +1,6 @@
 package com.raytotti.convertcurrency.transaction.application;
 
-import com.raytotti.convertcurrency.commun.application.ResponseCollection;
+import com.raytotti.convertcurrency.commons.application.ResponseCollection;
 import com.raytotti.convertcurrency.conversion.domain.Conversion;
 import com.raytotti.convertcurrency.conversion.domain.IConversionService;
 import com.raytotti.convertcurrency.transaction.domain.Transaction;
@@ -18,6 +18,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.net.URI;
@@ -38,6 +39,7 @@ public class TransactionController {
     private final UserRepository userRepository;
 
     @PostMapping
+    @Transactional
     public ResponseEntity<TransactionResponse> create(@RequestBody @Valid CreateTransactionRequest request) {
 
         if (!userRepository.existsById(request.getUserId())) {
@@ -58,9 +60,9 @@ public class TransactionController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<TransactionResponse> findById(@PathVariable String id) {
+    public ResponseEntity<TransactionResponse> findById(@PathVariable UUID id) {
 
-        Optional<Transaction> transaction = repository.findById(UUID.fromString(id));
+        Optional<Transaction> transaction = repository.findById(id);
 
         TransactionResponse transactionResponse = TransactionResponse.from(transaction.orElseThrow(TransactionNotFound::new));
 

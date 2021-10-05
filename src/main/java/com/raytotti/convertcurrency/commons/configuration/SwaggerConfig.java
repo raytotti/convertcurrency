@@ -1,4 +1,4 @@
-package com.raytotti.convertcurrency;
+package com.raytotti.convertcurrency.commons.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

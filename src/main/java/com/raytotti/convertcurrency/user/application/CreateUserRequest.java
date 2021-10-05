@@ -12,13 +12,11 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CreateUserRequest {
 
-    @Valid
     @NotBlank(message = "{User.cpf.NotBlank}")
     @Size(max = 14, min = 14, message = "{User.cpf.Size}")
     @CPF(message = "{User.cpf.Pattern}")
     private String cpf;
 
-    @Valid
     @NotBlank(message = "{User.name.NotBlank}")
     @Size(min = 3, max = 256, message = "{User.name.Size}")
     private String name;

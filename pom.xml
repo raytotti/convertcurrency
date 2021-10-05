@@ -14,7 +14,7 @@
     <groupId>com.raytotti</groupId>
     <artifactId>convertcurrency</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>convertcurrency</name>
+    <name>convert-currency</name>
     <description>API Rest that is able to perform a conversion between two currencies using updated rates from an external service.
     </description>
 
@@ -99,6 +99,7 @@
     </dependencies>
 
     <build>
+        <finalName>convert-currency</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
