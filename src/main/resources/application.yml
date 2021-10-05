@@ -26,3 +26,17 @@ conversion:
   uri: ${API_EXCHANGE_URI}
 server:
   port: ${PORT}
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+info:
+  app:
+    name: @project.name@
+    description: @project.description@
+    java:
+      version: @java.version@
