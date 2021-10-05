@@ -14,7 +14,7 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class TransactionResponse {
+public final class TransactionResponse {
 
     private UUID id;
     private UUID userId;

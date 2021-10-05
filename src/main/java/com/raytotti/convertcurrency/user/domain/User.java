@@ -1,6 +1,5 @@
 package com.raytotti.convertcurrency.user.domain;
 
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -18,15 +18,16 @@ import java.util.UUID;
 @Table(name = "user", uniqueConstraints = {
         @UniqueConstraint(name = "user_uk", columnNames = "cpf")
 })
-public class User {
+public final class User {
 
     @Id
     private UUID id;
 
+    @NotNull
     @Column(unique = true)
     private String cpf;
 
-    @Column
+    @NotNull
     private String name;
 
     User(UserBuilder builder) {
@@ -48,7 +49,7 @@ public class User {
     }
 
     @Override
-    public int hashCode()  {
+    public int hashCode() {
         return Objects.hash(cpf);
     }
 }

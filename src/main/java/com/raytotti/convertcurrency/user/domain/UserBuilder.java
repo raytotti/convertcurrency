@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.util.UUID;
 
 @Getter
-public class UserBuilder {
+public final class UserBuilder {
 
     private UUID id;
     private String cpf;
