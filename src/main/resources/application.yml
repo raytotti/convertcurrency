@@ -4,9 +4,9 @@ spring:
       enabled: false
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:convert
-    username: sa
-    password: admin
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USER}
+    password: ${DATASOURCE_PASSWORD}
     hikari:
       auto-commit: false
   flyway:
@@ -21,6 +21,8 @@ spring:
         show_sql: true
         format_sql: false
 conversion:
-  access-key: 51feb7685b0f35b307191ac711b3784a
-  url: http://api.exchangeratesapi.io/
-  uri: latest?base=EUR&access_key={key}&symbols={to},{from}
+  access-key: ${API_EXCHANGE_ACCESS_KEY}
+  url: ${API_EXCHANGE_URL}
+  uri: ${API_EXCHANGE_URI}
+server:
+  port: ${PORT}

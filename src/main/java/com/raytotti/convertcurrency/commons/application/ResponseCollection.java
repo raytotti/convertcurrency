@@ -1,4 +1,4 @@
-package com.raytotti.convertcurrency.commun.application;
+package com.raytotti.convertcurrency.commons.application;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

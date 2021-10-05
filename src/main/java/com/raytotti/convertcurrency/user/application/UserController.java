@@ -1,6 +1,6 @@
 package com.raytotti.convertcurrency.user.application;
 
-import com.raytotti.convertcurrency.commun.application.ResponseCollection;
+import com.raytotti.convertcurrency.commons.application.ResponseCollection;
 import com.raytotti.convertcurrency.user.domain.User;
 import com.raytotti.convertcurrency.user.domain.UserRepository;
 import com.raytotti.convertcurrency.user.exception.UserExistsException;
@@ -15,6 +15,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Optional;
@@ -43,9 +44,9 @@ public class UserController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<UserResponse> findById(@PathVariable String id) {
+    public ResponseEntity<UserResponse> findById(@PathVariable UUID id) {
 
-        Optional<User> user = repository.findById(UUID.fromString(id));
+        Optional<User> user = repository.findById(id);
 
         UserResponse userResponse = UserResponse.from(user.orElseThrow(UserNotFoundException::new));
 
@@ -53,6 +54,7 @@ public class UserController {
     }
 
     @PostMapping
+    @Transactional
     public ResponseEntity<UserResponse> create(@RequestBody @Valid CreateUserRequest request) {
 
         if (repository.existsByCpf(request.getCpf())) {

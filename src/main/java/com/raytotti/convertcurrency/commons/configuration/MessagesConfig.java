@@ -1,4 +1,4 @@
-package com.raytotti.convertcurrency;
+package com.raytotti.convertcurrency.commons.configuration;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -7,7 +7,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 @Configuration
-public class MessagesConfiguration {
+public class MessagesConfig {
 
     @Bean
     public MessageSource messageSource() {
