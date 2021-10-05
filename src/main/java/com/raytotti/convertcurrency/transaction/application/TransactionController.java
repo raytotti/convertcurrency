@@ -41,17 +41,22 @@ public class TransactionController {
     @PostMapping
     @Transactional
     public ResponseEntity<TransactionResponse> create(@RequestBody @Valid CreateTransactionRequest request) {
+        log.info("TransactionController -> create: Solicitado a criação de uma transação de moedas: {}", request);
 
         if (!userRepository.existsById(request.getUserId())) {
+            log.error("TransactionController -> create: O usuário {} não existe.", request.getUserId());
             throw new UserNotFoundException();
         }
 
         BigDecimal conversionRate = conversionService.getRate(Conversion.of(request.getOriginCurrency(), request.getDestinationCurrency()));
+        log.info("TransactionController -> create: Taxa de conversão que será utilizada: {}", conversionRate);
 
         Transaction newTransaction = repository.save(Transaction.of(request, conversionRate));
+        log.info("TransactionController -> create: Transação com id {} criada.", newTransaction.getId());
 
         TransactionResponse response = TransactionResponse.from(newTransaction);
 
+        log.info("TransactionController -> create: Transação respondida {}", response);
         URI uri = fromCurrentRequest()
                 .path("/")
                 .path(response.getId().toString())
@@ -61,24 +66,31 @@ public class TransactionController {
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<TransactionResponse> findById(@PathVariable UUID id) {
+        log.info("TransactionController -> findById: Solicitado a busca de uma transação pelo id {}.", id);
 
         Optional<Transaction> transaction = repository.findById(id);
+        TransactionResponse transactionResponse = TransactionResponse.from(transaction.orElseThrow(() -> {
+            log.error("TransactionController -> findById: Transação com o id {} não encontrado.", id);
+            throw new TransactionNotFound();
+        }));
 
-        TransactionResponse transactionResponse = TransactionResponse.from(transaction.orElseThrow(TransactionNotFound::new));
-
+        log.info("TransactionController -> findById: Transação encontrada. {}", transactionResponse);
         return ResponseEntity.ok(transactionResponse);
     }
 
     @GetMapping(path = "/users/{userId}")
     public ResponseEntity<ResponseCollection<TransactionResponse>> findByUserId(@PathVariable UUID userId,
                                                                                 @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        log.info("TransactionController -> findByUserId: Solicitado a busca de todas as transações de um usuário {} com a paginação {}.", userId, pageable);
 
         if (!userRepository.existsById(userId)) {
+            log.error("TransactionController -> findByUserId: O usuário {} não existe.", userId);
             throw new UserNotFoundException();
         }
 
         Page<TransactionResponse> transactions = repository.findByUserId(userId, pageable)
                 .map(TransactionResponse::from);
+        log.info("TransactionController -> findByUserId: Transações encontradas" + transactions.getContent());
 
         return ResponseEntity.ok(ResponseCollection.from(transactions));
     }

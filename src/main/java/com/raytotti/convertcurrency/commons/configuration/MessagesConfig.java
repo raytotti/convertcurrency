@@ -11,23 +11,19 @@ public class MessagesConfig {
 
     @Bean
     public MessageSource messageSource() {
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setBasename("messages/exception/messages");
-        messageSource.setDefaultEncoding("UTF-8");
-        messageSource.setUseCodeAsDefaultMessage(true);
-        return messageSource;
+        return messageSourceConfig("messages/exception/messages");
     }
 
     @Bean
     public LocalValidatorFactoryBean getValidatorFactoryBean() {
         LocalValidatorFactoryBean factoryBean = new LocalValidatorFactoryBean();
-        factoryBean.setValidationMessageSource(messageSourceValidation());
+        factoryBean.setValidationMessageSource(messageSourceConfig("messages/validation/messages"));
         return factoryBean;
     }
 
-    public MessageSource messageSourceValidation() {
+    public MessageSource messageSourceConfig(String path) {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setBasename("messages/validation/messages");
+        messageSource.setBasename(path);
         messageSource.setDefaultEncoding("UTF-8");
         messageSource.setUseCodeAsDefaultMessage(true);
         return messageSource;

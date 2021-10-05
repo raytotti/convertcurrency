@@ -3,11 +3,11 @@ package com.raytotti.convertcurrency.user.application;
 import lombok.*;
 import org.hibernate.validator.constraints.br.CPF;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Getter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CreateUserRequest {

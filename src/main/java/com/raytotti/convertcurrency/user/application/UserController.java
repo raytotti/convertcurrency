@@ -32,32 +32,13 @@ public class UserController {
 
     private final UserRepository repository;
 
-    @GetMapping
-    @ResponseBody
-    public ResponseEntity<ResponseCollection<UserResponse>> findAll(@PageableDefault(sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
-
-        Page<UserResponse> users = repository.findAll(pageable)
-                .map(UserResponse::from);
-
-        return ResponseEntity.ok(ResponseCollection.from(users));
-
-    }
-
-    @GetMapping(path = "/{id}")
-    public ResponseEntity<UserResponse> findById(@PathVariable UUID id) {
-
-        Optional<User> user = repository.findById(id);
-
-        UserResponse userResponse = UserResponse.from(user.orElseThrow(UserNotFoundException::new));
-
-        return ResponseEntity.ok(userResponse);
-    }
-
     @PostMapping
     @Transactional
     public ResponseEntity<UserResponse> create(@RequestBody @Valid CreateUserRequest request) {
+        log.info("UserController -> create: Solicitado a criação de um usuário: {}", request);
 
         if (repository.existsByCpf(request.getCpf())) {
+            log.error("UserController -> create: Já existe um usuário para o CPF: {}", request.getCpf());
             throw new UserExistsException();
         }
 
@@ -65,10 +46,11 @@ public class UserController {
                 .cpf(request.getCpf())
                 .name(request.getName())
                 .build();
-
         repository.save(newUser);
+        log.info("UserController -> create: Usuário com id {} criado.", newUser.getId());
 
         UserResponse response = UserResponse.from(newUser);
+        log.info("UserController -> create: Usuário respondido {}", response);
 
         URI uri = fromCurrentRequest()
                 .path("/")
@@ -76,4 +58,32 @@ public class UserController {
                 .build().toUri();
         return ResponseEntity.created(uri).body(response);
     }
+
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<UserResponse> findById(@PathVariable UUID id) {
+        log.info("UserController -> findById: Solicitado a busca de um usuário pelo id {}.", id);
+        Optional<User> user = repository.findById(id);
+
+        UserResponse userResponse = UserResponse.from(user.orElseThrow(() -> {
+            log.error("UserController -> findById: Usuário com o id {} não encontrado.", id);
+            throw new UserNotFoundException();
+        }));
+
+        log.info("UserController -> findById: Usuário encontrado. {}", userResponse);
+        return ResponseEntity.ok(userResponse);
+    }
+
+    @GetMapping
+    @ResponseBody
+    public ResponseEntity<ResponseCollection<UserResponse>> findAll(@PageableDefault(sort = "name", direction = Sort.Direction.ASC) Pageable pageable) {
+        log.info("UserController -> findAll: Solicitado a busca de todos usuário com a paginação {}.", pageable);
+
+        Page<UserResponse> users = repository.findAll(pageable)
+                .map(UserResponse::from);
+
+        log.info("UserController -> findAll: Usuários encontrados: {}", users.getContent());
+        return ResponseEntity.ok(ResponseCollection.from(users));
+
+    }
+
 }
