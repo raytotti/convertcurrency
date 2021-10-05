@@ -9,6 +9,9 @@ import com.raytotti.convertcurrency.transaction.exception.TransactionNotFound;
 import com.raytotti.convertcurrency.user.domain.UserRepository;
 import com.raytotti.convertcurrency.user.exception.UserNotFoundException;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -40,6 +43,14 @@ public class TransactionController {
 
     @PostMapping
     @Transactional
+    @ApiOperation(value = "Create new Transaction Currency.", response = TransactionResponse.class, responseContainer = "Transaction")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Operation completed successfully."),
+            @ApiResponse(code = 400, message = "Failed to validate! Request Invalid."),
+            @ApiResponse(code = 404, message = "Failed to validate! User or Tax Rate not found."),
+            @ApiResponse(code = 415, message = "Unsupported Content Type."),
+            @ApiResponse(code = 500, message = "Unexpected system failure.")
+    })
     public ResponseEntity<TransactionResponse> create(@RequestBody @Valid CreateTransactionRequest request) {
         log.info("TransactionController -> create: Solicitado a criação de uma transação de moedas: {}", request);
 
@@ -65,6 +76,13 @@ public class TransactionController {
     }
 
     @GetMapping(path = "/{id}")
+    @ApiOperation(value = "Retrieve an Transaction Currency by Id.", response = TransactionResponse.class, responseContainer = "Transaction")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Operation completed successfully."),
+            @ApiResponse(code = 400, message = "Failed to validate! Request Invalid."),
+            @ApiResponse(code = 404, message = "Failed to validate! Transaction not found."),
+            @ApiResponse(code = 500, message = "Unexpected system failure.")
+    })
     public ResponseEntity<TransactionResponse> findById(@PathVariable UUID id) {
         log.info("TransactionController -> findById: Solicitado a busca de uma transação pelo id {}.", id);
 
@@ -79,6 +97,13 @@ public class TransactionController {
     }
 
     @GetMapping(path = "/users/{userId}")
+    @ApiOperation(value = "Retrieve all Transaction Currency by User.", response = TransactionResponse.class, responseContainer = "Transaction")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Operation completed successfully."),
+            @ApiResponse(code = 400, message = "Failed to validate! Request Invalid."),
+            @ApiResponse(code = 404, message = "Failed to validate! User not found."),
+            @ApiResponse(code = 500, message = "Unexpected system failure.")
+    })
     public ResponseEntity<ResponseCollection<TransactionResponse>> findByUserId(@PathVariable UUID userId,
                                                                                 @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         log.info("TransactionController -> findByUserId: Solicitado a busca de todas as transações de um usuário {} com a paginação {}.", userId, pageable);
