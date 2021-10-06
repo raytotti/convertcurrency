@@ -38,7 +38,7 @@ public class CreateUserIT {
         mock.perform(post(urlTemplate).contentType(APPLICATION_JSON).content(mapper.writeValueAsBytes(userRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists(LOCATION))
-                .andExpect(redirectedUrlPattern("**//**" + urlTemplate + "*"))
+                .andExpect(redirectedUrlPattern("**//**" + urlTemplate + "/*"))
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.name", equalTo(name)))
                 .andExpect(jsonPath("$.cpf", equalTo(cpf)));
