@@ -53,9 +53,9 @@ docker run -p 8080:8080
 
 To run the project, you will need to install the following programs:
 
-- [JDK 11: Necessário para executar o projeto Java](http://www.oracle.com/technetwork/java/javase/downloads/jdk10-downloads-4416644.html)
-- [Maven: Necessário para realizar o build do projeto Java](http://mirror.nbtelecom.com.br/apache/maven/maven-3/3.5.3/binaries/apache-maven-3.5.3-bin.zip)
-- [IntelliJ IDEA: Para desenvolvimento do projeto](https://www.jetbrains.com/pt-br/idea/download/)
+- [JDK 11: Required to run the Java project](https://www.oracle.com/java/technologies/downloads/)
+- [Maven: Required to build the Java project](https://maven.apache.org/download.cgi)
+- [IntelliJ IDEA: For project development](https://www.jetbrains.com/pt-br/idea/download/)
 
 #### Development
 
