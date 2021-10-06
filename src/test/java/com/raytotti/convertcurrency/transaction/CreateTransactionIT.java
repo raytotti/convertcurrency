@@ -17,7 +17,7 @@ import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpHeaders.LOCATION;
